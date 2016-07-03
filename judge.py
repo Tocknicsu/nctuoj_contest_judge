@@ -7,6 +7,25 @@ import judgeio
 def execute():
     pass
 
+def judge():
+    submission_id = judgeio.get_submission_id()
+    if submission_id is None:
+        time.sleep(0.5)
+        return
+    print("Get: ", submission_id)
+    submission_data = judgeio.get_submission(submission_id)
+    judgeio.get_submission_file(submission_data)
+    print(submission_data)
+    problem_data = judgeio.get_problem(submission_data['problem_id'])
+    print(problem_data)
+    verdict = problem_data['verdict']
+    testdata = problem_data['testdata']
+    print(verdict)
+    print(testdata)
+    judgeio.get_testdata(problem_data['id'], testdata)
+
+
+
 
 if __name__ == "__main__":
     print("=====start=====")
@@ -18,10 +37,5 @@ if __name__ == "__main__":
         else:
             sys.exit(0)
     while True:
-        submission_id = judgeio.get_submission_id()
-        if submission_id is None:
-            time.sleep(0.5)
-            continue
-        print("Get: ", submission_id)
-
-
+        judge()
+        sys.exit()
