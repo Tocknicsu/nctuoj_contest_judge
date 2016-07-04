@@ -32,23 +32,29 @@ def get_submission_file(submission_data):
     payload = {
         "token": config.token
     }
+    folder = "%s/data/submissions/%s"%(config.DATA_ROOT, submission_data['id'])
+    try:
+        os.makedirs(folder)
+    except:
+        pass
     res = requests.get(url, data=payload)
-    with open(submission_data['file_name'], "wb") as f:
+    with open("%s/%s"%(folder, submission_data['file_name']), "wb") as f:
         f.write(res.text.encode())
 
 def get_testdatum(problem_id, testdatum):
     payload = {
         "token": config.token
     }
+    folder = "%s/data/testdata/%s"%(config.DATA_ROOT, testdatum['id'])
     try:
-        os.makedirs('./testdata/%s'%(testdatum['id']))
+        os.makedirs(folder)
     except:
         pass
     for x in ["input", "output"]:
         url = "%s/api/problems/%s/testdata/%d/input/"%(config.base_url, problem_id, testdatum['id'])
         res = requests.get(url, data=payload)
 
-        with open('testdata/%s/%s'%(testdatum['id'], x), "wb") as f:
+        with open('%s/%s'%(folder, x), "wb") as f:
             f.write(res.text.encode())
 
 
