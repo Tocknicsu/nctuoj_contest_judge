@@ -993,7 +993,7 @@ signal_alarm(int unused UNUSED)
 {
   /* Time limit checks are synchronous, so we only schedule them there. */
   timer_tick = 1;
-  alarm(1);
+  ualarm(1000, 1000);
 }
 
 static void
@@ -1120,7 +1120,7 @@ box_keeper(void)
     {
       sa.sa_handler = signal_alarm;
       sigaction(SIGALRM, &sa, NULL);
-      alarm(1);
+      ualarm(1000, 1000);
     }
 
   for(;;)
