@@ -8,4 +8,5 @@ data
 client.ovpn
 build/
 mnt/
+isolate
 
