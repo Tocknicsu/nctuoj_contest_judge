@@ -160,9 +160,12 @@ class Judge():
     def run(self):
         submission_id = judgeio.get_submission_id()
         if submission_id is None:
+            print(".", end="")
+            sys.stdout.flush()
             time.sleep(0.5)
             return
         self.prepare_sandbox()
+        print()
         print("Get: ", submission_id)
 
         ### get language
