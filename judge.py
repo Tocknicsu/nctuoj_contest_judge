@@ -144,16 +144,18 @@ class Judge():
         sp.call("cp '%s' '%s/file_b'"%(file_b, self.verdict_sandbox.folder), shell=True)
         self.verdict_sandbox.exec_box(["/usr/bin/env"] + run_cmd + ["file_a", "file_b"])
         res = self.read_meta(self.verdict_sandbox.options['meta'])
+        if res['status'] != "AC":
+            return ("SE", "Verdict Execute Result:"+str(res['status']))
         f = open("%s/verdict"%(self.verdict_sandbox.folder), "r")
         x = f.read().split(" ")
         if len(x) != 2:
-            return ("SE", 0.0)
+            return ("SE", "Verdict result wrong, it should be '[AC|WA]' 'score_rate'")
         if x[0] != "AC" and x[0] != "WA":
-            return ("SE", 0.0)
+            return ("SE", "Verdict result wrong, it should be '[AC|WA]' 'score_rate'")
         try:
             return (x[0], float(x[1]))
         except:
-            return ("SE", 0.0)
+            return ("SE", "Verdict result wrong, it should be '[AC|WA]' 'score_rate'")
 
     def run(self):
         submission_id = judgeio.get_submission_id()
@@ -165,60 +167,92 @@ class Judge():
 
         ### get language
         languages = { x['id']: x['name'] for x in judgeio.get_languages()}
+        verdict_types = { x['abbreviation']: x['id'] for x in judgeio.get_verdict_type()}
 
-
-        ### get submission data and compile
+        ### get submission data
         submission_data = judgeio.get_submission(submission_id)
         judgeio.get_submission_file(submission_data)
         submission_execute = judgeio.get_execute_types(submission_data['execute_type_id'])
         submission_execute['lang'] = languages[submission_execute['language_id']]
         submission_execute['file_name'] = submission_data['file_name']
-        sp.call("cp '%s/submissions/%s/%s' '%s'"%(config.DATA_ROOT, submission_data['id'], submission_data['file_name'], self.sandbox.folder), shell=True)
-        compile_res = self.compile(self.sandbox, submission_execute)
-        if compile_res['status'] != "AC":
-            ### CE
-            ### io post submission
-            self.clear_sandbox()
-            return
-
         ### get problem data
         problem_data = judgeio.get_problem(submission_data['problem_id'])
-
-        ### get verdict data and compile
+        ### get testdata
+        testdata = problem_data['testdata']
+        judgeio.get_testdata(problem_data['id'], testdata)
+        ### get verdict
         verdict = problem_data['verdict']
         judgeio.get_verdict_file(verdict)
         verdict_execute = judgeio.get_execute_types(verdict['execute_type_id'])
         verdict_execute['lang'] = languages[verdict_execute['language_id']]
         verdict_execute['file_name'] = verdict['file_name']
-        sp.call("cp '%s/verdicts/%s/%s' '%s'"%(config.DATA_ROOT, verdict['id'], verdict['file_name'], self.verdict_sandbox.folder), shell=True)
-        compile_res = self.compile(self.verdict_sandbox, verdict_execute)
+
+        ### submission compile
+        sp.call("cp '%s/submissions/%s/%s' '%s'"%(config.DATA_ROOT, submission_data['id'], submission_data['file_name'], self.sandbox.folder), shell=True)
+        compile_res = self.compile(self.sandbox, submission_execute)
         if compile_res['status'] != "AC":
-            ### io post submission
-            ### SE
+            ### submission CE
+            post_submission_testdata = {
+                "submission_id": submission_data['id'],
+                "testdata_id": testdata[0]['id'],
+                "verdict_id": verdict_types["CE"],
+                "note": open("%s/compile_msg"%(self.sandbox.folder), "r").read(),
+            }
+            post_res = judgeio.post_submission_testdata(post_submission_testdata)
             self.clear_sandbox()
             return
 
-        ### get testdata
-        testdata = problem_data['testdata']
-        judgeio.get_testdata(problem_data['id'], testdata)
+
+        ### verdict compile
+        sp.call("cp '%s/verdicts/%s/%s' '%s'"%(config.DATA_ROOT, verdict['id'], verdict['file_name'], self.verdict_sandbox.folder), shell=True)
+        compile_res = self.compile(self.verdict_sandbox, verdict_execute)
+        if compile_res['status'] != "AC":
+            ### verdict CE => SE
+            post_submission_testdata = {
+                "submission_id": submission_data['id'],
+                "testdata_id": testdata[0]['id'],
+                "verdict_id": verdict_types["SE"],
+                "note": "Cannot compile verdict\n" + open("%s/compile_msg"%(self.verdict_sandbox.folder), "r").read(),
+            }
+            post_res = judgeio.post_submission_testdata(post_submission_testdata)
+            self.clear_sandbox()
+            return
+
         for testdatum in testdata:
             exec_res = self.exec(testdatum, submission_execute, submission_data)
-            ### if AC
-            ### run verdict
-            if exec_res['status'] != "AC":
-                pass
-            else:
+            ### if execute without any wrong, run verdict
+            if exec_res['status'] == "AC":
                 file_a = "%s/testdata/%s/output"%(config.DATA_ROOT, testdatum['id'])
                 file_b = "%s/output"%(self.sandbox.folder)
                 verdict_res = self.verdict(verdict_execute, file_a, file_b)
-                print("===Verdict===", verdict_res)
+                ### if verdict wrong => SE
+                if verdict_res[0] == "SE":
+                    post_submission_testdata = {
+                        "submission_id": submission_data['id'],
+                        "testdata_id": testdatum['id'],
+                        "verdict_id": verdict_types["SE"],
+                        "note":  verdict_res[1],
+                    }
+                    post_res = judgeio.post_submission_testdata(post_submission_testdata)
+                else:
+                    post_submission_testdata = {
+                        "submission_id": submission_data['id'],
+                        "testdata_id": testdatum['id'],
+                        "time_usage": exec_res['time'],
+                        "memory_usage": exec_res['memory'],
+                        "score": int(verdict_res[1] * testdatum['score']),
+                        "verdict_id": verdict_types[verdict_res[0]],
+                    }
+                    post_res = judgeio.post_submission_testdata(post_submission_testdata)
+            else:
+                post_submission_testdata = {
+                    "submission_id": submission_data['id'],
+                    "testdata_id": testdatum['id'],
+                    "verdict_id": verdict_types[exec_res[0]],
+                }
+                post_res = judgeio.post_submission_testdata(post_submission_testdata)
             ### io post submission testdata
-
-
-
-
-
-
+        self.clear_sandbox()
 
 if __name__ == "__main__":
     print("=====start=====")
@@ -232,4 +266,3 @@ if __name__ == "__main__":
     judge = Judge()
     while True:
         judge.run()
-        sys.exit()

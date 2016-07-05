@@ -112,3 +112,28 @@ def get_languages():
     except:
         return None
 
+def get_verdict_type():
+    url = "%s/api/verdicts/"%(config.base_url)
+    payload = {
+        "token": config.token
+    }
+    res = requests.get(url, data=payload)
+    try:
+        data = json.loads(res.text)['msg']
+        return data
+    except:
+        return None
+
+def post_submission_testdata(data):
+    url = "%s/api/judge/testdata/"%(config.base_url)
+    data['token'] = config.token
+    res = requests.post(url, data=data)
+    try:
+        data = json.loads(res.text)['msg']
+        return data
+    except:
+        return "Cannot parse result" + str(res.text)
+
+def post_submission():
+    pass
+
