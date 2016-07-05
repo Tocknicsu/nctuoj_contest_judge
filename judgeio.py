@@ -32,7 +32,7 @@ def get_submission_file(submission_data):
     payload = {
         "token": config.token
     }
-    folder = "%s/data/submissions/%s"%(config.DATA_ROOT, submission_data['id'])
+    folder = "%s/submissions/%s"%(config.DATA_ROOT, submission_data['id'])
     try:
         os.makedirs(folder)
     except:
@@ -45,13 +45,13 @@ def get_testdatum(problem_id, testdatum):
     payload = {
         "token": config.token
     }
-    folder = "%s/data/testdata/%s"%(config.DATA_ROOT, testdatum['id'])
+    folder = "%s/testdata/%s"%(config.DATA_ROOT, testdatum['id'])
     try:
         os.makedirs(folder)
     except:
         pass
     for x in ["input", "output"]:
-        url = "%s/api/problems/%s/testdata/%d/input/"%(config.base_url, problem_id, testdatum['id'])
+        url = "%s/api/problems/%s/testdata/%d/%s/"%(config.base_url, problem_id, testdatum['id'], x)
         res = requests.get(url, data=payload)
 
         with open('%s/%s'%(folder, x), "wb") as f:
@@ -62,8 +62,19 @@ def get_testdata(problem_id, testdata):
     for testdatum in testdata:
         get_testdatum(problem_id, testdatum)
 
-def get_verdict():
-    pass
+def get_verdict_file(verdict_data):
+    url = "%s/api/problems/%s/verdict/file/"%(config.base_url, verdict_data['id'])
+    payload = {
+        "token": config.token
+    }
+    folder = "%s/verdicts/%s"%(config.DATA_ROOT, verdict_data['id'])
+    try:
+        os.makedirs(folder)
+    except:
+        pass
+    res = requests.get(url, data=payload)
+    with open("%s/%s"%(folder, verdict_data['file_name']), "wb") as f:
+        f.write(res.text.encode())
 
 def get_problem(problem_id):
     url = "%s/api/problems/%s/"%(config.base_url, problem_id)
@@ -76,7 +87,28 @@ def get_problem(problem_id):
         return data
     except:
         return None
-    pass
 
-def get_execute_types():
-    pass
+def get_execute_types(execute_type_id):
+    url = "%s/api/executes/%s/"%(config.base_url, execute_type_id)
+    payload = {
+        "token": config.token
+    }
+    res = requests.get(url, data=payload)
+    try:
+        data = json.loads(res.text)['msg']
+        return data
+    except:
+        return None
+
+def get_languages():
+    url = "%s/api/languages/"%(config.base_url)
+    payload = {
+        "token": config.token
+    }
+    res = requests.get(url, data=payload)
+    try:
+        data = json.loads(res.text)['msg']
+        return data
+    except:
+        return None
+
