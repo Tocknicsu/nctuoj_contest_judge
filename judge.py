@@ -94,7 +94,8 @@ class Judge():
         return res
 
     def exec(self, testdatum, submission_execute, submission_data):
-        sp.call("cp '%s/testdata/%s/input' '%s'"%(config.DATA_ROOT, testdatum['id'], self.sandbox.folder), shell=True)
+        # sp.call("cp '%s/testdata/%s/input' '%s'"%(config.DATA_ROOT, testdatum['id'], self.sandbox.folder), shell=True)
+        sp.call(['cp', os.path.join(config.DATA_ROOT, 'testdata', str(testdatum['id']), 'input'), self.sandbox.folder])
         self.sandbox.options['proc_limit'] = 4
         self.sandbox.options['input'] = "input"
         self.sandbox.options['time_limit'] = testdatum['time_limit'] / 1000
@@ -140,8 +141,10 @@ class Judge():
 
         self.verdict_sandbox.set_options(**self.verdict_sandbox.options)
 
-        sp.call("cp '%s' '%s/file_a'"%(file_a, self.verdict_sandbox.folder), shell=True)
-        sp.call("cp '%s' '%s/file_b'"%(file_b, self.verdict_sandbox.folder), shell=True)
+        # sp.call("cp '%s' '%s/file_a'"%(file_a, self.verdict_sandbox.folder), shell=True)
+        sp.call(['cp', file_a, os.path.join(self.verdict_sandbox.folder, 'file_a')])
+        # sp.call("cp '%s' '%s/file_b'"%(file_b, self.verdict_sandbox.folder), shell=True)
+        sp.call(['cp', file_b, os.path.join(self.verdict_sandbox.folder, 'file_b')])
         self.verdict_sandbox.exec_box(["/usr/bin/env"] + run_cmd + ["file_a", "file_b"])
         res = self.read_meta(self.verdict_sandbox.options['meta'])
         if res['status'] != "AC":
@@ -191,7 +194,8 @@ class Judge():
         verdict_execute['file_name'] = verdict['file_name']
 
         ### submission compile
-        sp.call("cp '%s/submissions/%s/%s' '%s'"%(config.DATA_ROOT, submission_data['id'], submission_data['file_name'], self.sandbox.folder), shell=True)
+        # sp.call("cp '%s/submissions/%s/%s' '%s'"%(config.DATA_ROOT, submission_data['id'], submission_data['file_name'], self.sandbox.folder), shell=True)
+        sp.call(['cp', os.path.join(config.DATA_ROOT, 'submissions', str(submission_data['id']), submission_data['file_name']), self.sandbox.folder])
         compile_res = self.compile(self.sandbox, submission_execute)
         if compile_res['status'] != "AC":
             ### submission CE
@@ -208,7 +212,8 @@ class Judge():
 
 
         ### verdict compile
-        sp.call("cp '%s/verdicts/%s/%s' '%s'"%(config.DATA_ROOT, verdict['id'], verdict['file_name'], self.verdict_sandbox.folder), shell=True)
+        # sp.call("cp '%s/verdicts/%s/%s' '%s'"%(config.DATA_ROOT, verdict['id'], verdict['file_name'], self.verdict_sandbox.folder), shell=True)
+        sp.call(['cp', os.path.join(config.DATA_ROOT, 'verdicts', str(verdict['id']), verdict['file_name']), self.verdict_sandbox.folder])
         compile_res = self.compile(self.verdict_sandbox, verdict_execute)
         if compile_res['status'] != "AC":
             ### verdict CE => SE
