@@ -162,7 +162,7 @@ class Judge():
         if submission_id is None:
             print(".", end="")
             sys.stdout.flush()
-            time.sleep(0.5)
+            time.sleep(1)
             return
         self.prepare_sandbox()
         print()
@@ -202,6 +202,7 @@ class Judge():
                 "note": open("%s/compile_msg"%(self.sandbox.folder), "r").read(),
             }
             post_res = judgeio.post_submission_testdata(post_submission_testdata)
+            post_res = judgeio.post_submission(submission_id)
             self.clear_sandbox()
             return
 
@@ -218,6 +219,7 @@ class Judge():
                 "note": "Cannot compile verdict\n" + open("%s/compile_msg"%(self.verdict_sandbox.folder), "r").read(),
             }
             post_res = judgeio.post_submission_testdata(post_submission_testdata)
+            post_res = judgeio.post_submission(submission_id)
             self.clear_sandbox()
             return
 
@@ -255,6 +257,7 @@ class Judge():
                 }
                 post_res = judgeio.post_submission_testdata(post_submission_testdata)
             ### io post submission testdata
+        post_res = judgeio.post_submission(submission_id)
         self.clear_sandbox()
 
 if __name__ == "__main__":

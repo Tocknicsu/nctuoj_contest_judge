@@ -134,6 +134,16 @@ def post_submission_testdata(data):
     except:
         return "Cannot parse result" + str(res.text)
 
-def post_submission():
-    pass
+def post_submission(submission_id):
+    url = "%s/api/judge/"%(config.base_url)
+    data = {
+        'token': config.token,
+        'submission_id': submission_id,
+    }
+    res = requests.post(url, data=data)
+    try:
+        data = json.loads(res.text)['msg']
+        return data
+    except:
+        return "Cannot parse result" + str(res.text)
 
