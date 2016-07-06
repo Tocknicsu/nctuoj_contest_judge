@@ -258,7 +258,7 @@ class Judge():
                 post_submission_testdata = {
                     "submission_id": submission_data['id'],
                     "testdata_id": testdatum['id'],
-                    "verdict_id": verdict_types[exec_res[0]],
+                    "verdict_id": verdict_types[verdict_res[0]],
                 }
                 post_res = judgeio.post_submission_testdata(post_submission_testdata)
             ### io post submission testdata
