@@ -68,7 +68,7 @@ class Judge():
             "meta": "%s/meta"%(sandbox.folder),
             "output": "compile_msg",
             "errput": "compile_msg",
-            "mem_limit": 262144,
+            "mem_limit": 262144 << 2,
             "time_limit": 3,
         }
         ### special option for each lang
