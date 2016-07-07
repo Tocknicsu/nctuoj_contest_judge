@@ -141,9 +141,7 @@ class Judge():
 
         self.verdict_sandbox.set_options(**self.verdict_sandbox.options)
 
-        # sp.call("cp '%s' '%s/file_a'"%(file_a, self.verdict_sandbox.folder), shell=True)
         sp.call(['cp', file_a, os.path.join(self.verdict_sandbox.folder, 'file_a')])
-        # sp.call("cp '%s' '%s/file_b'"%(file_b, self.verdict_sandbox.folder), shell=True)
         sp.call(['cp', file_b, os.path.join(self.verdict_sandbox.folder, 'file_b')])
         self.verdict_sandbox.exec_box(["/usr/bin/env"] + run_cmd + ["file_a", "file_b"])
         res = self.read_meta(self.verdict_sandbox.options['meta'])
@@ -167,6 +165,7 @@ class Judge():
             sys.stdout.flush()
             time.sleep(1)
             return
+        self.clear_sandbox()
         self.prepare_sandbox()
         print()
         print("Get: ", submission_id)
@@ -177,19 +176,38 @@ class Judge():
 
         ### get submission data
         submission_data = judgeio.get_submission(submission_id)
-        judgeio.get_submission_file(submission_data)
+        if submission_data is None:
+            return
+        submission_file = judgeio.get_submission_file(submission_data)
+        if submission_file is None:
+            return
         submission_execute = judgeio.get_execute_types(submission_data['execute_type_id'])
+        if submission_execute is None:
+            return
         submission_execute['lang'] = languages[submission_execute['language_id']]
         submission_execute['file_name'] = submission_data['file_name']
         ### get problem data
         problem_data = judgeio.get_problem(submission_data['problem_id'])
+        if problem_data is None:
+            return
         ### get testdata
         testdata = problem_data['testdata']
-        judgeio.get_testdata(problem_data['id'], testdata)
+        if len(testdata) == 0:
+            post_res = judgeio.post_submission(submission_id)
+            return
+
+        testdata_result = judgeio.get_testdata(problem_data['id'], testdata)
+        if testdata_result is None:
+            return 
         ### get verdict
         verdict = problem_data['verdict']
-        judgeio.get_verdict_file(verdict)
+        verdict_file = judgeio.get_verdict_file(verdict)
+        if verdict_file is None:
+            return
+
         verdict_execute = judgeio.get_execute_types(verdict['execute_type_id'])
+        if verdict_execute is None:
+            return
         verdict_execute['lang'] = languages[verdict_execute['language_id']]
         verdict_execute['file_name'] = verdict['file_name']
 
@@ -206,8 +224,11 @@ class Judge():
                 "note": open("%s/compile_msg"%(self.sandbox.folder), "r").read(),
             }
             post_res = judgeio.post_submission_testdata(post_submission_testdata)
+            if post_res is None:
+                return
             post_res = judgeio.post_submission(submission_id)
-            self.clear_sandbox()
+            if post_res is None:
+                return
             return
 
 
@@ -224,8 +245,11 @@ class Judge():
                 "note": "Cannot compile verdict\n" + open("%s/compile_msg"%(self.verdict_sandbox.folder), "r").read(),
             }
             post_res = judgeio.post_submission_testdata(post_submission_testdata)
+            if post_res is None:
+                return
             post_res = judgeio.post_submission(submission_id)
-            self.clear_sandbox()
+            if post_res is None:
+                return
             return
 
         for testdatum in testdata:
@@ -244,6 +268,8 @@ class Judge():
                         "note":  verdict_res[1],
                     }
                     post_res = judgeio.post_submission_testdata(post_submission_testdata)
+                    if post_res is None:
+                        return
                 else:
                     post_submission_testdata = {
                         "submission_id": submission_data['id'],
@@ -253,17 +279,23 @@ class Judge():
                         "score": int(verdict_res[1] * testdatum['score']),
                         "verdict_id": verdict_types[verdict_res[0]],
                     }
+                    ### io post submission testdata
                     post_res = judgeio.post_submission_testdata(post_submission_testdata)
+                    if post_res is None:
+                        return
             else:
                 post_submission_testdata = {
                     "submission_id": submission_data['id'],
                     "testdata_id": testdatum['id'],
                     "verdict_id": verdict_types[verdict_res[0]],
                 }
+                ### io post submission testdata
                 post_res = judgeio.post_submission_testdata(post_submission_testdata)
-            ### io post submission testdata
+                if post_res is None:
+                    return
         post_res = judgeio.post_submission(submission_id)
-        self.clear_sandbox()
+        if post_res is None:
+            return
 
 if __name__ == "__main__":
     print("=====start=====")
