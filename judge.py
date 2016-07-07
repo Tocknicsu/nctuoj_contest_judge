@@ -68,7 +68,7 @@ class Judge():
             "meta": "%s/meta"%(sandbox.folder),
             "output": "compile_msg",
             "errput": "compile_msg",
-            "mem_limit": 262144,
+            "mem_limit": 262144 << 2,
             "time_limit": 3,
         }
         ### special option for each lang
@@ -287,7 +287,10 @@ class Judge():
                 post_submission_testdata = {
                     "submission_id": submission_data['id'],
                     "testdata_id": testdatum['id'],
-                    "verdict_id": verdict_types[verdict_res[0]],
+                    "verdict_id": verdict_types[exec_res['status']],
+                    "time_usage": exec_res['time'],
+                    "memory_usage": exec_res['memory'],
+                    'score': 0,
                 }
                 ### io post submission testdata
                 post_res = judgeio.post_submission_testdata(post_submission_testdata)
