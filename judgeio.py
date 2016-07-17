@@ -137,8 +137,7 @@ def post_submission_testdata(data):
     url = "%s/api/judge/testdata/"%(config.base_url)
     data['token'] = config.token
     res = requests.post(url, data=data)
-    data = json.loads(res.text)['msg']
-    print("post submission testdata", data)
+    data = json.loads(res.text)
     return data
 
 @TRY
@@ -149,7 +148,6 @@ def post_submission(submission_id):
         'submission_id': submission_id,
     }
     res = requests.post(url, data=data)
-    data = json.loads(res.text)['msg']
-    print("post submission", submission_id)
+    data = json.loads(res.text)
     return data
 
