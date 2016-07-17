@@ -17,7 +17,6 @@ def TRY(f):
     return func
 
 def get_submission_id():
-    print("get submission id")
     payload = {
         "token": config.token
     }
