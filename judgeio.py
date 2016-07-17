@@ -15,7 +15,6 @@ def TRY(f):
         return None
     return func
 
-@TRY
 def get_submission_id():
     payload = {
         "token": config.token
@@ -23,7 +22,10 @@ def get_submission_id():
     url = "%s/api/judge/"%(config.base_url)
     res = requests.get(url, data=payload)
     data = json.loads(res.text)
-    return int(data['msg']['submission_id'])
+    try:
+        return int(data['msg']['submission_id'])
+    except:
+        return None
 @TRY
 def get_submission(submission_id):
     url = "%s/api/submissions/%s/"%(config.base_url, submission_id)
