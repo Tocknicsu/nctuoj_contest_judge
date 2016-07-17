@@ -17,6 +17,7 @@ def TRY(f):
     return func
 
 def get_submission_id():
+    print("get submission id")
     payload = {
         "token": config.token
     }
@@ -29,6 +30,7 @@ def get_submission_id():
         return None
 @TRY
 def get_submission(submission_id):
+    print("get submission")
     url = "%s/api/submissions/%s/"%(config.base_url, submission_id)
     payload = {
         "token": config.token
@@ -38,6 +40,7 @@ def get_submission(submission_id):
     return data
 @TRY
 def get_submission_file(submission_data):
+    print("get submission file")
     url = "%s/api/submissions/%s/file/"%(config.base_url, submission_data['id'])
     payload = {
         "token": config.token
@@ -54,6 +57,7 @@ def get_submission_file(submission_data):
 
 @TRY
 def get_testdatum(problem_id, testdatum):
+    print("get testdatum")
     payload = {
         "token": config.token
     }
@@ -73,11 +77,13 @@ def get_testdatum(problem_id, testdatum):
 
 @TRY
 def get_testdata(problem_id, testdata):
+    print("get testdata")
     for testdatum in testdata:
         get_testdatum(problem_id, testdatum)
     return True
 @TRY
 def get_verdict_file(verdict_data):
+    print("get verdict file")
     url = "%s/api/problems/%s/verdict/file/"%(config.base_url, verdict_data['id'])
     payload = {
         "token": config.token
@@ -94,6 +100,7 @@ def get_verdict_file(verdict_data):
 
 @TRY
 def get_problem(problem_id):
+    print("get problem")
     url = "%s/api/problems/%s/"%(config.base_url, problem_id)
     payload = {
         "token": config.token
@@ -104,6 +111,7 @@ def get_problem(problem_id):
 
 @TRY
 def get_execute_types(execute_type_id):
+    print("get execute type")
     url = "%s/api/executes/%s/"%(config.base_url, execute_type_id)
     payload = {
         "token": config.token
@@ -114,6 +122,7 @@ def get_execute_types(execute_type_id):
 
 @TRY
 def get_languages():
+    print("get language")
     url = "%s/api/languages/"%(config.base_url)
     payload = {
         "token": config.token
@@ -124,6 +133,7 @@ def get_languages():
 
 @TRY
 def get_verdict_type():
+    print("get verdict type")
     url = "%s/api/verdicts/"%(config.base_url)
     payload = {
         "token": config.token
@@ -134,6 +144,7 @@ def get_verdict_type():
 
 @TRY
 def post_submission_testdata(data):
+    print("post submission testdata")
     url = "%s/api/judge/testdata/"%(config.base_url)
     data['token'] = config.token
     res = requests.post(url, data=data)
@@ -142,6 +153,7 @@ def post_submission_testdata(data):
 
 @TRY
 def post_submission(submission_id):
+    print("post submission")
     url = "%s/api/judge/"%(config.base_url)
     data = {
         'token': config.token,
