@@ -138,6 +138,7 @@ def post_submission_testdata(data):
     data['token'] = config.token
     res = requests.post(url, data=data)
     data = json.loads(res.text)['msg']
+    print("post submission testdata", data)
     return data
 
 @TRY
@@ -149,5 +150,6 @@ def post_submission(submission_id):
     }
     res = requests.post(url, data=data)
     data = json.loads(res.text)['msg']
+    print("post submission", submission_id)
     return data
 
