@@ -160,6 +160,7 @@ def post_submission(submission_id):
         'submission_id': submission_id,
     }
     res = requests.post(url, data=data)
+    print(res.text)
     data = json.loads(res.text)
     return data
 
