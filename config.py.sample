@@ -1,5 +1,5 @@
-token = "thisistokenforjudge"
+token = "token"
 base_url = "http://127.0.0.1:3019"
 MAX_RETRY = 5
 
-DATA_ROOT = "./mnt/"
+DATA_ROOT = "/mnt/"
