@@ -1,19 +1,17 @@
 import requests
 import json
 import config
-import os
+import time
 
 def TRY(f):
     def func(*args, **kargs):
-        time = config.MAX_RETRY
-        while time:
+        for _ in range(config.MAX_RETRY):
             try:
                 res = f(*args, **kargs)
                 return res
             except Exception as e:
                 print(e)
-                os.sleep(1)
-                time = time-1
+                time.sleep(1)
         return None
     return func
 
