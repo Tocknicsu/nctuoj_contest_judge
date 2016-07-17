@@ -17,8 +17,10 @@ class Judge():
         self.verdict_sandbox.init_box()
 
     def clear_sandbox(self):
-        self.sandbox.delete_box()
-        self.verdict_sandbox.delete_box()
+        if self.sandbox is not None:
+            self.sandbox.delete_box()
+        if self.verdict_sandbox is not None:
+            self.verdict_sandbox.delete_box()
 
 
     def cmd_replace(self, cmd, param):
