@@ -44,8 +44,8 @@ def get_submission_file(submission_data):
     folder = "%s/submissions/%s"%(config.DATA_ROOT, submission_data['id'])
     try:
         os.makedirs(folder)
-    except:
-        pass
+    except Exception as e:
+        print(e)
     res = requests.get(url, data=payload)
     with open("%s/%s"%(folder, submission_data['file_name']), "wb") as f:
         f.write(res.text.encode())
@@ -59,8 +59,8 @@ def get_testdatum(problem_id, testdatum):
     folder = "%s/testdata/%s"%(config.DATA_ROOT, testdatum['id'])
     try:
         os.makedirs(folder)
-    except:
-        pass
+    except Exception as e:
+        print(e)
     for x in ["input", "output"]:
         url = "%s/api/problems/%s/testdata/%d/%s/"%(config.base_url, problem_id, testdatum['id'], x)
         res = requests.get(url, data=payload)
@@ -84,8 +84,8 @@ def get_verdict_file(verdict_data):
     folder = "%s/verdicts/%s"%(config.DATA_ROOT, verdict_data['id'])
     try:
         os.makedirs(folder)
-    except:
-        pass
+    except Exception as e:
+        print(e)
     res = requests.get(url, data=payload)
     with open("%s/%s"%(folder, verdict_data['file_name']), "wb") as f:
         f.write(res.text.encode())
