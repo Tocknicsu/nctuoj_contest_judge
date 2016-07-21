@@ -74,7 +74,7 @@ class Judge():
         ### special option for each lang
         if data['lang'] == "Java":
             sandbox.options['mem_limit'] = 0
-            sandbox.options['proc_limit'] = 16
+            sandbox.options['proc_limit'] = 8
         sandbox.set_options(**sandbox.options)
         res = {
             "status": "AC",
