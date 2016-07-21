@@ -73,9 +73,9 @@ class Judge():
         }
         ### special option for each lang
         if data['lang'] == "Java":
-            self.sandbox.options['mem_limit'] = 0
-            self.sandbox.options['proc_limit'] = 8
-        sandbox.set_options(**self.sandbox.options)
+            sandbox.options['mem_limit'] = 0
+            sandbox.options['proc_limit'] = 16
+        sandbox.set_options(**sandbox.options)
         res = {
             "status": "AC",
             "exitcode": 0,
@@ -136,10 +136,10 @@ class Judge():
             "memory_limit": 262144,
         })
         if verdict_execute['lang'] == "Java":
-            self.sandbox.options['mem_limit'] = 0
-            self.sandbox.options['proc_limit'] = 8
-
+            self.verdict_sandbox.options['mem_limit'] = 0
+            self.verdict_sandbox.options['proc_limit'] = 8
         self.verdict_sandbox.set_options(**self.verdict_sandbox.options)
+
 
         sp.call(['cp', file_a, os.path.join(self.verdict_sandbox.folder, 'file_a')])
         sp.call(['cp', file_b, os.path.join(self.verdict_sandbox.folder, 'file_b')])
