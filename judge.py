@@ -8,8 +8,7 @@ from isolate import Sandbox
 import subprocess as sp
 
 class Judge():
-    def prepare_sandbox(self):
-        self.sandbox = Sandbox(os.getpid(), './isolate')
+    def prepare_sandbox(self): self.sandbox = Sandbox(os.getpid(), './isolate')
         self.sandbox.folder = "/tmp/box/%s/box/"%(os.getpid())
         self.sandbox.init_box()
         self.verdict_sandbox = Sandbox(os.getpid() + 65536, './isolate')
@@ -74,7 +73,7 @@ class Judge():
         ### special option for each lang
         if data['lang'] == "Java":
             self.sandbox.options['mem_limit'] = 0
-            self.sandbox.options['proc_limit'] = 16
+            self.sandbox.options['proc_limit'] = 8
         sandbox.set_options(**self.sandbox.options)
         res = {
             "status": "AC",
@@ -105,7 +104,7 @@ class Judge():
         self.sandbox.options["errput"] = "errput"
         if submission_execute['lang'] == "Java":
             self.sandbox.options['mem_limit'] = 0
-            self.sandbox.options['proc_limit'] = 16
+            self.sandbox.options['proc_limit'] = 8
         self.sandbox.set_options(**self.sandbox.options)
         command = submission_execute['commands'][-1]['command']
         run_cmd = command.split(' ')
@@ -137,7 +136,7 @@ class Judge():
         })
         if verdict_execute['lang'] == "Java":
             self.sandbox.options['mem_limit'] = 0
-            self.sandbox.options['proc_limit'] = 16
+            self.sandbox.options['proc_limit'] = 8
 
         self.verdict_sandbox.set_options(**self.verdict_sandbox.options)
 
