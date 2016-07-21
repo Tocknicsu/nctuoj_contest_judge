@@ -8,7 +8,8 @@ from isolate import Sandbox
 import subprocess as sp
 
 class Judge():
-    def prepare_sandbox(self): self.sandbox = Sandbox(os.getpid(), './isolate')
+    def prepare_sandbox(self): 
+        self.sandbox = Sandbox(os.getpid(), './isolate')
         self.sandbox.folder = "/tmp/box/%s/box/"%(os.getpid())
         self.sandbox.init_box()
         self.verdict_sandbox = Sandbox(os.getpid() + 65536, './isolate')
