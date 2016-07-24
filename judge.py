@@ -94,7 +94,6 @@ class Judge():
         return res
 
     def exec(self, testdatum, submission_execute, submission_data):
-        # sp.call("cp '%s/testdata/%s/input' '%s'"%(config.DATA_ROOT, testdatum['id'], self.sandbox.folder), shell=True)
         sp.call(['cp', os.path.join(config.DATA_ROOT, 'testdata', str(testdatum['id']), 'input'), self.sandbox.folder])
         self.sandbox.options['proc_limit'] = 4
         self.sandbox.options['input'] = "input"
@@ -212,7 +211,6 @@ class Judge():
         verdict_execute['file_name'] = verdict['file_name']
 
         ### submission compile
-        # sp.call("cp '%s/submissions/%s/%s' '%s'"%(config.DATA_ROOT, submission_data['id'], submission_data['file_name'], self.sandbox.folder), shell=True)
         sp.call(['cp', os.path.join(config.DATA_ROOT, 'submissions', str(submission_data['id']), submission_data['file_name']), self.sandbox.folder])
         compile_res = self.compile(self.sandbox, submission_execute)
         if compile_res['status'] != "AC":
@@ -233,7 +231,6 @@ class Judge():
 
 
         ### verdict compile
-        # sp.call("cp '%s/verdicts/%s/%s' '%s'"%(config.DATA_ROOT, verdict['id'], verdict['file_name'], self.verdict_sandbox.folder), shell=True)
         sp.call(['cp', os.path.join(config.DATA_ROOT, 'verdicts', str(verdict['id']), verdict['file_name']), self.verdict_sandbox.folder])
         compile_res = self.compile(self.verdict_sandbox, verdict_execute)
         if compile_res['status'] != "AC":
@@ -254,6 +251,7 @@ class Judge():
 
         for testdatum in testdata:
             exec_res = self.exec(testdatum, submission_execute, submission_data)
+            post_verdict = None
             ### if execute without any wrong, run verdict
             if exec_res['status'] == "AC":
                 file_a = "%s/testdata/%s/output"%(config.DATA_ROOT, testdatum['id'])
@@ -268,6 +266,7 @@ class Judge():
                         "note":  verdict_res[1],
                     }
                     post_res = judgeio.post_submission_testdata(post_submission_testdata)
+                    post_verdict = "SE"
                     if post_res is None:
                         return
                 else:
@@ -281,6 +280,7 @@ class Judge():
                     }
                     ### io post submission testdata
                     post_res = judgeio.post_submission_testdata(post_submission_testdata)
+                    post_verdict = verdict_res[0]
                     if post_res is None:
                         return
             else:
@@ -294,8 +294,15 @@ class Judge():
                 }
                 ### io post submission testdata
                 post_res = judgeio.post_submission_testdata(post_submission_testdata)
+                post_verdict = exec_res['status']
                 if post_res is None:
                     return
+            if post_verdict != "AC":
+                post_res = judgeio.post_submission(submission_id)
+                if post_res is None:
+                    return
+                return
+
         post_res = judgeio.post_submission(submission_id)
         if post_res is None:
             return
