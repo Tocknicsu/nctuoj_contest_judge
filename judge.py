@@ -85,6 +85,7 @@ class Judge():
             run_cmd = [x for x in command.split(' ')]
             run_cmd = self.cmd_replace(run_cmd, {
                 "file_name": data['file_name'],
+                "memory_limit": 262144 * 20,
             })
             sandbox.exec_box(["/usr/bin/env"] + run_cmd)
             res = self.read_meta(self.sandbox.options['meta'])
