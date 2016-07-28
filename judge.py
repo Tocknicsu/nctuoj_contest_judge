@@ -88,7 +88,7 @@ class Judge():
                 "memory_limit": 262144 * 20,
             })
             sandbox.exec_box(["/usr/bin/env"] + run_cmd)
-            res = self.read_meta(self.sandbox.options['meta'])
+            res = self.read_meta(sandbox.options['meta'])
             if res['status'] != "AC":
                 return res 
         return res

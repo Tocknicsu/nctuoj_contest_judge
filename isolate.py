@@ -74,6 +74,7 @@ class Sandbox:
         if self._opt['mem_limit']: cmd += ['--mem=%s'%str(self._opt['mem_limit'])]
         if self._opt['mem_limit']: cmd += ['--cg-mem=%s'%str(self._opt['mem_limit'])]
         if self._opt['proc_limit']: cmd += ['--processes=%s'%str(self._opt['proc_limit'])]
+        elif self._opt['proc_limit'] == 0: cmd += ['--processes']
         if self._opt['time_limit']: cmd += ['--time=%s'%str(self._opt['time_limit'])]
         if self._opt['time_limit']: cmd += ['--wall-time=%s'%str(self._opt['time_limit'])]
         if self._opt['fsize_limit']: cmd += ['--fsize=%s'%str(self._opt['fsize_limit'])]
