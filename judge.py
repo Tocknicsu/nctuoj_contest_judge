@@ -73,7 +73,7 @@ class Judge():
         }
         ### special option for each lang
         if data['lang'] == "Java":
-            sandbox.options['mem_limit'] = 2621440
+            sandbox.options['mem_limit'] = 0
             sandbox.options['proc_limit'] = 0
         sandbox.set_options(**sandbox.options)
         res = {
@@ -85,7 +85,6 @@ class Judge():
             run_cmd = [x for x in command.split(' ')]
             run_cmd = self.cmd_replace(run_cmd, {
                 "file_name": data['file_name'],
-                "memory_limit": 262144,
             })
             sandbox.exec_box(["/usr/bin/env"] + run_cmd)
             res = self.read_meta(self.sandbox.options['meta'])
