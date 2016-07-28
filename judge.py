@@ -74,7 +74,7 @@ class Judge():
         ### special option for each lang
         if data['lang'] == "Java":
             sandbox.options['mem_limit'] = 0
-            sandbox.options['proc_limit'] = 16
+            sandbox.options['proc_limit'] = 0
         sandbox.set_options(**sandbox.options)
         res = {
             "status": "AC",
@@ -104,7 +104,7 @@ class Judge():
         self.sandbox.options["errput"] = "errput"
         if submission_execute['lang'] == "Java":
             self.sandbox.options['mem_limit'] = 0
-            self.sandbox.options['proc_limit'] = 16
+            self.sandbox.options['proc_limit'] = 0
         self.sandbox.set_options(**self.sandbox.options)
         command = submission_execute['commands'][-1]['command']
         run_cmd = command.split(' ')
@@ -136,7 +136,7 @@ class Judge():
         })
         if verdict_execute['lang'] == "Java":
             self.verdict_sandbox.options['mem_limit'] = 0
-            self.verdict_sandbox.options['proc_limit'] = 16
+            self.verdict_sandbox.options['proc_limit'] = 0
         self.verdict_sandbox.set_options(**self.verdict_sandbox.options)
 
 
