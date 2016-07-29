@@ -25,9 +25,12 @@ def get_submission_id():
         "token": config.token
     }
     url = "%s/api/judge/"%(config.base_url)
-    res = requests.get(url, data=payload, headers=headers)
-    data = json.loads(res.text)
     try:
+        res = requests.get(url, data=payload, headers=headers)
+    except:
+        print('!')
+        return None
+    data = json.loads(res.text)
         return int(data['msg']['submission_id'])
     except:
         return None
