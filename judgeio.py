@@ -31,6 +31,7 @@ def get_submission_id():
         print('!')
         return None
     data = json.loads(res.text)
+    try:
         return int(data['msg']['submission_id'])
     except:
         return None
