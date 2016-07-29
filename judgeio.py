@@ -4,6 +4,10 @@ import config
 import time
 import os
 
+headers={
+    'Connection':'close',
+}
+
 def TRY(f):
     def func(*args, **kargs):
         for _ in range(config.MAX_RETRY):
@@ -21,7 +25,7 @@ def get_submission_id():
         "token": config.token
     }
     url = "%s/api/judge/"%(config.base_url)
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload, headers=headers)
     data = json.loads(res.text)
     try:
         return int(data['msg']['submission_id'])
@@ -34,7 +38,7 @@ def get_submission(submission_id):
     payload = {
         "token": config.token
     }
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload, headers=headers)
     data = json.loads(res.text)['msg']
     return data
 @TRY
@@ -49,7 +53,7 @@ def get_submission_file(submission_data):
         os.makedirs(folder)
     except Exception as e:
         print(e)
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload, headers=headers)
     with open("%s/%s"%(folder, submission_data['file_name']), "wb") as f:
         f.write(res.text.encode())
     return True
@@ -67,7 +71,7 @@ def get_testdatum(problem_id, testdatum):
         print(e)
     for x in ["input", "output"]:
         url = "%s/api/problems/%s/testdata/%d/%s/"%(config.base_url, problem_id, testdatum['id'], x)
-        res = requests.get(url, data=payload)
+        res = requests.get(url, data=payload, headers=headers)
 
         with open('%s/%s'%(folder, x), "wb") as f:
             f.write(res.text.encode())
@@ -92,7 +96,7 @@ def get_verdict_file(verdict_data):
         os.makedirs(folder)
     except Exception as e:
         print(e)
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload, headers=headers)
     with open("%s/%s"%(folder, verdict_data['file_name']), "wb") as f:
         f.write(res.text.encode())
     return True
@@ -104,7 +108,7 @@ def get_problem(problem_id):
     payload = {
         "token": config.token
     }
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload,headers=headers)
     data = json.loads(res.text)['msg']
     return data
 
@@ -115,7 +119,7 @@ def get_execute_types(execute_type_id):
     payload = {
         "token": config.token
     }
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload,headers=headers)
     data = json.loads(res.text)['msg']
     return data
 
@@ -126,7 +130,7 @@ def get_languages():
     payload = {
         "token": config.token
     }
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload,headers=headers)
     data = json.loads(res.text)['msg']
     return data
 
@@ -137,7 +141,7 @@ def get_verdict_type():
     payload = {
         "token": config.token
     }
-    res = requests.get(url, data=payload)
+    res = requests.get(url, data=payload,headers=headers)
     data = json.loads(res.text)['msg']
     return data
 
@@ -146,7 +150,7 @@ def post_submission_testdata(data):
     print("post submission testdata")
     url = "%s/api/judge/testdata/"%(config.base_url)
     data['token'] = config.token
-    res = requests.post(url, data=data)
+    res = requests.post(url, data=data,headers=headers)
     data = json.loads(res.text)
     return data
 
@@ -158,7 +162,7 @@ def post_submission(submission_id):
         'token': config.token,
         'submission_id': submission_id,
     }
-    res = requests.post(url, data=data)
+    res = requests.post(url, data=data,headers=headers)
     print(res.text)
     data = json.loads(res.text)
     return data
