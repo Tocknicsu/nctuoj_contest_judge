@@ -69,7 +69,7 @@ class Judge():
             "output": "compile_msg",
             "errput": "compile_msg",
             "mem_limit": 262144 << 2,
-            "time_limit": 3,
+            "time_limit": 60,
         }
         ### special option for each lang
         if data['lang'] == "Java":
