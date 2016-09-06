@@ -64,7 +64,7 @@ class Judge():
 
     def compile(self, sandbox, data):
         sandbox.options = {
-            "proc_limit": 4,
+            "proc_limit": 0,
             "meta": "%s/meta"%(sandbox.folder),
             "output": "compile_msg",
             "errput": "compile_msg",
