@@ -82,7 +82,7 @@ class Judge():
         }
         for x in data['commands'][:-1]:
             command = x['command']
-            run_cmd = [x for x in command.split(' ')]
+            run_cmd = command.split()
             run_cmd = self.cmd_replace(run_cmd, {
                 "file_name": data['file_name'],
                 "memory_limit": 262144 * 20,
@@ -107,7 +107,7 @@ class Judge():
             self.sandbox.options['proc_limit'] = 0
         self.sandbox.set_options(**self.sandbox.options)
         command = submission_execute['commands'][-1]['command']
-        run_cmd = command.split(' ')
+        run_cmd = command.split()
         run_cmd = self.cmd_replace(run_cmd, {
             "file_name": submission_data['file_name'],
             "memory_limit": testdatum['memory_limit'],
@@ -129,7 +129,7 @@ class Judge():
             "errput": "verdict_error",
         }
         command = verdict_execute['commands'][-1]['command']
-        run_cmd = command.split(' ')
+        run_cmd = command.split()
         run_cmd = self.cmd_replace(run_cmd, {
             "file_name": verdict_execute['file_name'],
             "memory_limit": 262144,
